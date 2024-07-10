@@ -2,17 +2,29 @@ const http=require("http");
 const express =require("express");
 const cors = require("cors");
 const socketIO = require("socket.io");
-
+const path = require("path");
+const dotenv=require("dotenv");
 const app=express();
 const port=4500|| process.env.PORT ;
-
+dotenv.config();
 
 const users=[{}];
 
 app.use(cors());
-app.get("/",(req,res)=>{
-    res.send("HELL ITS WORKING");
-})
+
+const __dirname1=path.resolve();
+if(process.env.NODE_ENV==='production')
+{
+    app.use(express.static(path.join(__dirname1,'/ccat/build')));
+    app.get("*",(req,res)=>{
+        res.sendFile(path.resolve(__dirname1,'ccat','build','index.html'));
+    })
+}
+else{
+    app.get("/",(req,res)=>{
+        res.send("HELL ITS WORKING");
+    })
+}
 const server=http.createServer(app);
 
 const io=socketIO(server);
